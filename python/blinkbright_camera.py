@@ -59,7 +59,11 @@ def startCamera():
             #cv2.imshow('Blinkbright Live Display', detectMotionDiff(t_minus, t, t_plus))
             cv2.imshow('Blinkbright Live Display', colordisplay)
             ret, colordisplay = cam.read()
+            #Timestamp
+            cv2.putText(colordisplay, datetime.datetime.now().strftime("%A %d %B %Y %H:%M:%S"),
+            (10, colordisplay.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.50, (255, 255, 255), 1)
 
+            #setting frames for comparison
             t_minus = t
             t = t_plus
             t_plus = cv2.cvtColor(cam.read()[1], cv2.COLOR_RGB2GRAY)
@@ -74,16 +78,17 @@ def startCamera():
 		print "Motion detected. Frame saved as %s" % frame
                 cv2.imwrite(os.path.join(currentDate, frame), colordisplay)
                 #logger.info('Motion shot taken.')
-		time.sleep(1)
+        # enable/adjust following line to reduce rate of images taken         
+		# time.sleep(1)
 
-       # basic keyboard functionality; replace with more responsive interface later. C saves frame manually, H displays help, Q quits the application.
+       # basic keyboard functionality; replace with more responsive interface later. C saves frame manually, H displays "help", Q quits the application.
             if cv2.waitKey(15) & 0xFF == ord('c'):
 		name = datetime.datetime.now().strftime('%d%m%Y_%H.%M.%S') + '.jpg'
 		print "Manual screenshot taken. Filename: %s" % name
 		cv2.imwrite(name, colordisplay)
                 #logger.info('Manual user screenshot taken.')
             if cv2.waitKey(15) == ord('h'):
-                showCamHelp()
+                print " Use 'c' to take a snapshot. Use 'q' to quit the program. To display the instructions again, press 'h'."
             if cv2.waitKey(15) & 0xFF == ord('q'):
                 print('Quitting program. Thank you for using Blinkbright.')
                 cam.release()
