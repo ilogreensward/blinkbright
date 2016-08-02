@@ -61,7 +61,7 @@ def startCamera():
             ret, colordisplay = cam.read()
             #Timestamp
             cv2.putText(colordisplay, datetime.datetime.now().strftime("%A %d %B %Y %H:%M:%S"),
-            (10, colordisplay.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.50, (255, 255, 255), 1)
+            (10, colordisplay.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.50, (255, 0, 162), 1)
 
             #setting frames for comparison
             t_minus = t
@@ -72,7 +72,7 @@ def startCamera():
             # Enable next "print" line to show calculated values (for debug & adjustment purposes)
 
             
-            if cv2.countNonZero(detectMotionDiff(t_minus, t, t_plus)) > 145000:
+            if cv2.countNonZero(detectMotionDiff(t_minus, t, t_plus)) > 160000:
 		currentDate = checkIfFolderExists()	
 		frame = datetime.datetime.now().strftime('%d%m%Y_%H.%M.%S') + '.jpg'
 		print "Motion detected. Frame saved as %s" % frame
