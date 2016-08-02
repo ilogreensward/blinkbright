@@ -2,11 +2,23 @@ __author__ = 'kanurminen'
 
 import os
 import cv2
-#import easygui
 import logging
 import datetime
 import time
 
+#Globals
+#Minimum position of tolerance slider
+toleranceMin = 140000
+#Maximum position of tolerance slider
+toleranceMax = 160000
+#Tolerance to be adjusted 
+tolerance = 140000
+
+
+
+def adjustTolerance(x):
+    tolerance = x
+    print "Tolerance set as %s" % tolerance
 
 
 # compare two frames and return their difference
@@ -43,21 +55,28 @@ def startCamera():
     cam.set(3,640)
     cam.set(4,480)
 
+   
+
     #initialize grayscale feeds for diff calculation
     t_minus = cv2.cvtColor(cam.read()[1], cv2.COLOR_RGB2GRAY)
     t = cv2.cvtColor(cam.read()[1], cv2.COLOR_RGB2GRAY)
     t_plus = cv2.cvtColor(cam.read()[1], cv2.COLOR_RGB2GRAY)
 
-    # color camera - for the live display
+    # create window for live display
+    cv2.namedWindow("Blinkbright",1)
+    #add trackbar for tolerance
+    cv2.createTrackbar('Tolerance', "Blinkbright", toleranceMin, toleranceMax, adjustTolerance)
+    # initiate camera read
     ret, colordisplay = cam.read()
     print "Welcome to Blinkbright! Use 'c' to take a snapshot. Use 'q' to quit the program. To display the instructions again, press 'h'."
+    
 
     # main loop 	
     while True:
         try:
             #enable next line and disable the one after it to see grayscale diff output (for debugging/ tolerance adjustment purposes)
             #cv2.imshow('Blinkbright Live Display', detectMotionDiff(t_minus, t, t_plus))
-            cv2.imshow('Blinkbright Live Display', colordisplay)
+            cv2.imshow("Blinkbright", colordisplay)
             ret, colordisplay = cam.read()
             #Timestamp
             cv2.putText(colordisplay, datetime.datetime.now().strftime("%A %d %B %Y %H:%M:%S"),
@@ -72,7 +91,7 @@ def startCamera():
             # Enable next "print" line to show calculated values (for debug & adjustment purposes)
 
             
-            if cv2.countNonZero(detectMotionDiff(t_minus, t, t_plus)) > 160000:
+            if cv2.countNonZero(detectMotionDiff(t_minus, t, t_plus)) > tolerance:
 		currentDate = checkIfFolderExists()	
 		frame = datetime.datetime.now().strftime('%d%m%Y_%H.%M.%S') + '.jpg'
 		print "Motion detected. Frame saved as %s" % frame
